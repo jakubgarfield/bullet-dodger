@@ -1,0 +1,14 @@
+running_1:
+  game: running_game
+
+running_2:
+  game: running_game
+
+finished_1:
+  game: finished_game
+
+draw_1:
+  game: draw_game
+
+timed_out_1:
+  game: timed_out_game

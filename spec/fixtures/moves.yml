@@ -1,0 +1,67 @@
+jed_2:
+  player_turn: running_1_1
+  action: "left"
+
+jed_1:
+  player_turn: running_1_1
+  action: "left"
+
+jakub_4:
+  player_turn: running_1_2
+  action: "shoot"
+
+jakub_3:
+  player_turn: running_1_2
+  action: "wait"
+
+jakub_2:
+  player_turn: running_2_1
+  action: "shoot"
+
+jakub_1:
+  player_turn: running_2_1
+  action: "shoot"
+
+steven_2:
+  player_turn: finished_1_1
+  action: "wait"
+
+steven_1:
+  player_turn: finished_1_1
+  action: "left"
+
+leandro_2:
+  player_turn: finished_1_2
+  action: "shoot"
+
+leandro_1:
+  player_turn: finished_1_2
+  action: "right"
+
+ben_3:
+  player_turn: draw_1_1
+  action: "left"
+
+ben_2:
+  player_turn: draw_1_1
+  action: "right"
+
+ben_1:
+  player_turn: draw_1_1
+  action: "shoot"
+
+nick_3:
+  player_turn: draw_1_2
+  action: "shoot"
+
+nick_2:
+  player_turn: draw_1_2
+  action: "shoot"
+
+nick_1:
+  player_turn: draw_1_2
+  action: "shoot"
+
+diego_1:
+  player_turn: timed_out_1
+  action: "right"

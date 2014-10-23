@@ -1,0 +1,35 @@
+jed:
+  name: "Jed"
+  game: running_game
+
+jakub:
+  name: "Jakub"
+  game: running_game
+
+luke:
+  name: "Luke"
+  game: waiting_game
+
+steven:
+  name: "Steven"
+  game: finished_game
+
+leandro:
+  name: "Leandro"
+  game: finished_game
+
+ben:
+  name: "Ben"
+  game: draw_game
+
+nick:
+  name: "Nick"
+  game: draw_game
+
+diego:
+  name: "Diego"
+  game: timed_out_game
+
+hao:
+  name: "Hao"
+  game: timed_out_game

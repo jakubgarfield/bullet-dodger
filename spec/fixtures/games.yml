@@ -1,0 +1,14 @@
+waiting_game:
+  created_at: 2010-10-10
+
+running_game:
+  created_at: 2010-10-10
+
+finished_game:
+  created_at: 2010-10-10
+
+draw_game:
+  created_at: 2010-10-10
+
+timed_out_game:
+  created_at: 2010-10-10
