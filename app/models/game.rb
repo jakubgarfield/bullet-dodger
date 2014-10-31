@@ -5,11 +5,7 @@ class Game < ActiveRecord::Base
   NUMBER_OF_PLAYERS = 2
 
   def self.create_or_join!
-    Game.where(players.size < 2).first
-
-    Game.joins(:players).having("COUNT(players.*) < 2")
-
-    Game.joins("LEFT OUTER JOIN players ON players.game_id = games.id") 
+    game_waiting_for_players || Game.create!
   end
 
   def waiting_for_players?
@@ -41,6 +37,10 @@ class Game < ActiveRecord::Base
   end
 
   protected
+  def self.game_waiting_for_players
+    Game.joins("LEFT OUTER JOIN players ON players.game_id = games.id").group("games.id").having("COUNT(*) < 2").first
+  end
+
   def get_or_create_turn!
     turns.last || turns.create!
   end
