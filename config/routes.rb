@@ -1,8 +1,14 @@
 Rails.application.routes.draw do
-  get "/game/:id", to: "games#show"
-  get "/games/join", to: "games#join"
+  #get "/game/:id", to: "games#show"
+  #post "/games/join", to: "games#join"
 
-  post "/game/:game_id/turn/:id", to: "turns#show"
+  #get "/game/:game_id/turn/:turn_id/", to: "turns#show"
+  #post "/game/:game_id/turn/:turn_id/player_turns", to: "player_turns#create"
 
-  post "game/:game_id/player_turns", to: "player_turns#create"
+  resources :games, only: [:show, :create] do
+    member do
+      resources :turns, only: [:show]
+      resources :player_turns, only: [:create]
+    end
+  end
 end

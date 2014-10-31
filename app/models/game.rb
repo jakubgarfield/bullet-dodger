@@ -4,18 +4,32 @@ class Game < ActiveRecord::Base
 
   NUMBER_OF_PLAYERS = 2
 
-  def state
-    if players.size < NUMBER_OF_PLAYERS
-      :waiting
-    elsif players.all?(&:dead?)
-      :draw
-    elsif winner.present?
-      :finished
-    elsif current_turn.present? && current_turn.timed_out?
-      :timed_out
-    else
-      :running
-    end
+  def self.create_or_join!
+    Game.where(players.size < 2).first
+
+    Game.joins(:players).having("COUNT(players.*) < 2")
+
+    Game.joins("LEFT OUTER JOIN players ON players.game_id = games.id") 
+  end
+
+  def waiting_for_players?
+    players.size < NUMBER_OF_PLAYERS
+  end
+
+  def draw?
+    players.all?(&:dead?)
+  end
+
+  def winner?
+    winner.present?
+  end
+
+  def timed_out?
+    current_turn.timed_out?
+  end
+
+  def waiting_for_turn_to_complete?
+    current_turn.completed?
   end
 
   def winner
@@ -23,6 +37,11 @@ class Game < ActiveRecord::Base
   end
 
   def current_turn
-    turns.last
+    get_or_create_turn!
+  end
+
+  protected
+  def get_or_create_turn!
+    turns.last || turns.create!
   end
 end
