@@ -1,14 +1,13 @@
 class Move < ActiveRecord::Base
-  belongs_to :player_turn
-
-  validates :player_turn, presence: true
-  validates :action, presence: true
-
   LEFT = "left"
   RIGHT = "right"
   WAIT = "wait"
   SHOOT = "shoot"
 
+  belongs_to :player_turn
+
+  validates :player_turn, presence: true
+  validates :action, presence: true, inclusion: { in: [LEFT, RIGHT, WAIT, SHOOT] }
 
   def to_i
     case action

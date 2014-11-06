@@ -4,7 +4,7 @@ class Game < ActiveRecord::Base
 
   NUMBER_OF_PLAYERS = 2
 
-  def self.create_or_join!
+  def self.create_or_find_waiting_game!
     game_waiting_for_players || Game.create!
   end
 

@@ -1,22 +1,16 @@
 class GamesController < ApplicationController
   def show
-    @game = Game.find_by_id(params[:id])
-
-    if @game.nil?
-      head :not_found
-    else
-      render json: GameJsonPresenter.new(@game).to_json
-    end
+    game = Game.find(params[:id])
+    render json: GameJsonPresenter.new(game).to_json
   end
 
   def create
-    return if params[:game][:username].nil?
-
-
-    ### accepts
-    # username
-    #
-    ### returns
-    # game { id, opponent { id, name } }
+    if params[:name].present?
+      render json: { error: "Name of the player is missing" }, status: :bad_request
+    else
+      game = Game.create_or_find_waiting_game!
+      game.players.create!(name: params[:name])
+      render json: GameJsonPresenter.new(game).to_json
+    end
   end
 end

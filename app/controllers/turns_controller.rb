@@ -1,7 +1,6 @@
 class TurnsController < ApplicationController
   def show
-    ### returns
-    # state of the turn
-    # moves { player_id  { moves }, player_id { moves }}
+    turn = Turn.find(params[:id])
+    render json: TurnJsonPresenter.new(turn).to_json
   end
 end
