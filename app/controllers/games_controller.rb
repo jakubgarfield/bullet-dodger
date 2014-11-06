@@ -1,12 +1,18 @@
 class GamesController < ApplicationController
   def show
-    ### returns
-    # state of the game
-    # current turn { id }
-    # winner { id, name }
+    @game = Game.find_by_id(params[:id])
+
+    if @game.nil?
+      head :not_found
+    else
+      render json: GameJsonPresenter.new(@game).to_json
+    end
   end
 
   def create
+    return if params[:game][:username].nil?
+
+
     ### accepts
     # username
     #

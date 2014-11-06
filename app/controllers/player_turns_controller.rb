@@ -3,8 +3,5 @@ class PlayerTurnsController < ApplicationController
     ### accepts
     # moves
     # player id
-    #
-    ### returns
-    # player turn id
   end
 end
