@@ -5,7 +5,7 @@ class GamesController < ApplicationController
   end
 
   def create
-    if params[:name].present?
+    if params[:name].nil?
       render json: { error: "Name of the player is missing" }, status: :bad_request
     else
       game = Game.create_or_find_waiting_game!
