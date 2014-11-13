@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  apipie
   resources :games, only: [:show, :create] do
     member do
       resources :turns, only: [:show] do
@@ -8,4 +9,6 @@ Rails.application.routes.draw do
       end
     end
   end
+
+  root to: 'apipie/apipies#index'
 end

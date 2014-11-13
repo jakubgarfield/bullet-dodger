@@ -27,6 +27,8 @@ GEM
       minitest (~> 5.1)
       thread_safe (~> 0.1)
       tzinfo (~> 1.1)
+    apipie-rails (0.2.6)
+      json
     arel (5.0.1.20140414130214)
     builder (3.2.2)
     byebug (3.4.0)
@@ -129,6 +131,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  apipie-rails
   byebug
   jbuilder (~> 2.0)
   jquery-rails
