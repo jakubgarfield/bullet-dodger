@@ -1,15 +1,15 @@
-class GameJsonPresenter
+class GamePresenter
   def initialize(game)
     @game = game
   end
 
-  def to_json
+  def to_h
     {
       id: @game.id,
       state: game_state,
       current_turn: ({ id: @game.current_turn.id } if @game.current_turn.present?),
-      winner: ({ id: @game.winner.id } if @game.winner?),
-      players: players_to_hash
+      winner: (player_to_h(@game.winner) if @game.winner?),
+      players: players_to_h
     }
   end
 
@@ -26,9 +26,11 @@ class GameJsonPresenter
     end
   end
 
-  def players_to_hash
-    @game.players.map do |player|
-      { id: player.id, name: player.name }
-    end
+  def players_to_h
+    @game.players.map { |player| player_to_h(player) }
+  end
+
+  def player_to_h(player)
+    { id: player.id, name: player.name }
   end
 end

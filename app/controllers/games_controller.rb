@@ -33,7 +33,7 @@ The last two are terminal states and in that case there might be a winner.
 eos
   def show
     game = Game.find(params[:id])
-    render json: GameJsonPresenter.new(game).to_json
+    render json: GamePresenter.new(game).to_h
   end
 
   api :POST, "/games", "Joins a game with waiting player or creates a new one. Returns the state of the game."
