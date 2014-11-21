@@ -21,6 +21,7 @@ but there are other cases. Firstly, the states of the game might be
 The last two are terminal states and in that case there might be a winner.
   {
     id: 1,
+    state: "finished"
     current_turn { id: 5 },
     players:
     {
