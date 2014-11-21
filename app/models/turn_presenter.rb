@@ -1,12 +1,12 @@
-class TurnJsonPresenter
+class TurnPresenter
   def initialize(turn)
     @turn = turn
   end
 
-  def to_json
+  def to_h
     {
       state: turn_state,
-      moves: moves_to_hash
+      moves: moves_to_h
     }
   end
 
@@ -21,7 +21,7 @@ class TurnJsonPresenter
     end
   end
 
-  def moves_to_hash
+  def moves_to_h
     @turn.player_turns.map do |player_turn|
       {
         player_id: player_turn.player.id,

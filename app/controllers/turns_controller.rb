@@ -26,6 +26,6 @@ and possibly move to the next turn if the game hasn't finished.
 eos
   def show
     turn = Turn.find(params[:id])
-    render json: TurnJsonPresenter.new(turn).to_json
+    render json: TurnPresenter.new(turn).to_h
   end
 end
