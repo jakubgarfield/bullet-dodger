@@ -48,12 +48,8 @@ game id and player id.
   }
 eos
   def create
-    if params[:name].nil?
-      render json: { error: "Name of the player is missing" }, status: :bad_request
-    else
-      game = Game.create_or_find_waiting_game!
-      player = game.players.create!(name: params[:name])
-      render json: { game_id: game.id, player_id: player.id }
-    end
+    game = Game.create_or_find_waiting_game!
+    player = game.players.create!(name: params[:name])
+    render json: { game_id: game.id, player_id: player.id }
   end
 end

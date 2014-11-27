@@ -4,9 +4,10 @@ class PlayerTurnsController < ApplicationController
   end
 
   api :POST, "/games/:game_id/turns/:turn_id/player_turns", "Player can submit his moves for one turn, but just once for each turn."
-#  param :moves, Array, required: true, desc: "An array with exactly #{PlayerTurn::NUMBER_OF_MOVES} moves that are represented by their names. The available moves are #{ Move::VALID_MOVES.join(", ")}."
-#  error code: Rack::Utils::SYMBOL_TO_STATUS_CODE[:not_acceptable], desc: "when moves were already submitted"
-#  error code: Rack::Utils::SYMBOL_TO_STATUS_CODE[:bad_request], desc: "when moves are invalid. See error message for an explanation."
+  param :player_id, String, required: true, desc: "An id of a player that submits the moves"
+  param :moves, Array, required: true, desc: "An array with exactly #{PlayerTurn::NUMBER_OF_MOVES} moves that are represented by their names. The available moves are #{ Move::VALID_MOVES.join(", ")}."
+  error code: Rack::Utils::SYMBOL_TO_STATUS_CODE[:not_acceptable], desc: "when moves were already submitted"
+  error code: Rack::Utils::SYMBOL_TO_STATUS_CODE[:bad_request], desc: "when moves are invalid. See error message for an explanation."
   description <<-eos
 If the method is called properly it returns 201 HTTP code.
 eos
@@ -16,7 +17,7 @@ eos
 
     if turn.player_turns.where(player: player).exists?
       render json: { error: "Moves were submitted already" }, status: :not_acceptable
-    elsif params[:moves].nil? || params[:moves].size != PlayerTurn::NUMBER_OF_MOVES
+    elsif params[:moves].size != PlayerTurn::NUMBER_OF_MOVES
       render json: { error: "You must submit #{PlayerTurn::NUMBER_OF_MOVES} moves."}, status: :bad_request
     else
       player_turn = turn.player_turns.build(player: player)

@@ -26,7 +26,7 @@ RSpec.describe Player, :type => :model do
 
     context "when there is none" do
       let(:player) { players(:luke) }
-      it { should eq nil}
+      it { should eq nil }
     end
 
     context "when Jed asks for an opponent" do
