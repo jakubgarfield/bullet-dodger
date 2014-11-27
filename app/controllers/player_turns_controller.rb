@@ -19,7 +19,7 @@ eos
     elsif params[:moves].nil? || params[:moves].size != PlayerTurn::NUMBER_OF_MOVES
       render json: { error: "You must submit #{PlayerTurn::NUMBER_OF_MOVES} moves."}, status: :bad_request
     else
-      player_turn = turn.player_turn.build(player: player)
+      player_turn = turn.player_turns.build(player: player)
       params[:moves].each { |move| player_turn.moves.build(action: move) }
 
       if player_turn.save
