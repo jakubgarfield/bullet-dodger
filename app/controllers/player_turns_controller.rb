@@ -3,10 +3,10 @@ class PlayerTurnsController < ApplicationController
     description "This resource is used to submit moves for a round."
   end
 
-  api :POST, "/games/:id/turns/:id/player_turns", "Player can submit his moves for one turn, but just once for each turn."
-  param :moves, Array, required: true, desc: "An array with exactly #{PlayerTurn::NUMBER_OF_MOVES} moves that are represented by their names. The available moves are #{ Move::VALID_MOVES.join(", ")}."
-  error code: Rack::Utils::SYMBOL_TO_STATUS_CODE[:not_acceptable], desc: "when moves were already submitted"
-  error code: Rack::Utils::SYMBOL_TO_STATUS_CODE[:bad_request], desc: "when moves are invalid. See error message for an explanation."
+  api :POST, "/games/:game_id/turns/:turn_id/player_turns", "Player can submit his moves for one turn, but just once for each turn."
+#  param :moves, Array, required: true, desc: "An array with exactly #{PlayerTurn::NUMBER_OF_MOVES} moves that are represented by their names. The available moves are #{ Move::VALID_MOVES.join(", ")}."
+#  error code: Rack::Utils::SYMBOL_TO_STATUS_CODE[:not_acceptable], desc: "when moves were already submitted"
+#  error code: Rack::Utils::SYMBOL_TO_STATUS_CODE[:bad_request], desc: "when moves are invalid. See error message for an explanation."
   description <<-eos
 If the method is called properly it returns 201 HTTP code.
 eos
