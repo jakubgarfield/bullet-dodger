@@ -42,6 +42,17 @@ class Game < ActiveRecord::Base
   end
 
   def get_or_create_turn!
-    turns.order(:created_at).last || turns.create!
+    transaction do
+      lock!
+      if last_turn && !last_turn.completed?
+        last_turn
+      else
+        turns.create!
+      end
+    end
+  end
+
+  def last_turn
+    turns.order(:created_at).last
   end
 end
