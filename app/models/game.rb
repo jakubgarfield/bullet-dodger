@@ -21,11 +21,11 @@ class Game < ActiveRecord::Base
   end
 
   def timed_out?
-    current_turn.present? && current_turn.timed_out?
+    last_turn.present? && last_turn.timed_out?
   end
 
   def waiting_for_turn_to_complete?
-    current_turn.present? && !current_turn.completed? && !current_turn.timed_out?
+    last_turn.present? && !last_turn.completed? && !last_turn.timed_out?
   end
 
   def winner
@@ -33,7 +33,11 @@ class Game < ActiveRecord::Base
   end
 
   def current_turn
-    get_or_create_turn! unless waiting_for_players?
+    if finished? || waiting_for_players?
+      last_turn
+    else
+      get_or_create_turn!
+    end
   end
 
   protected
@@ -54,5 +58,9 @@ class Game < ActiveRecord::Base
 
   def last_turn
     turns.order(:created_at).last
+  end
+
+  def finished?
+    draw? || winner? || timed_out?
   end
 end
