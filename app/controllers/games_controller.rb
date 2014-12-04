@@ -28,7 +28,7 @@ The last two are terminal states and in that case there might be a winner.
       { id: 2, name: "Jonathan" },
       { id: 3, name: "Jon" },
     },
-    winner: { id: 3 }
+    winner: { id: 3, name: "Jon" }
   }
 eos
   def show
