@@ -1,9 +1,9 @@
 class Move < ActiveRecord::Base
   LEFT = "left"
   RIGHT = "right"
-  WAIT = "wait"
   SHOOT = "shoot"
-  VALID_MOVES = [LEFT, RIGHT, WAIT, SHOOT]
+  RELOAD = "reload"
+  VALID_MOVES = [LEFT, RIGHT, SHOOT, RELOAD]
 
   belongs_to :player_turn
 
@@ -23,5 +23,9 @@ class Move < ActiveRecord::Base
 
   def shot?
     action == SHOOT
+  end
+
+  def reload?
+    action == RELOAD
   end
 end

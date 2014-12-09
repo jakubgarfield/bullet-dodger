@@ -34,8 +34,8 @@ RSpec.describe Move, :type => :model do
       it { should eq 1 }
     end
 
-    context "when wait" do
-      before { move.action = Move::WAIT }
+    context "when reload" do
+      before { move.action = Move::RELOAD }
       it { should eq 0 }
     end
 
@@ -54,7 +54,21 @@ RSpec.describe Move, :type => :model do
     end
 
     context "when doing something else" do
-      before { move.action = Move::WAIT }
+      before { move.action = Move::LEFT }
+      it { should eq false }
+    end
+  end
+
+  describe "#reload?" do
+    subject { move.reload? }
+
+    context "when reloading" do
+      before { move.action = Move::RELOAD }
+      it { should eq true }
+    end
+
+    context "when doing something else" do
+      before { move.action = Move::SHOOT }
       it { should eq false }
     end
   end

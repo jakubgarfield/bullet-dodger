@@ -233,5 +233,17 @@ RSpec.describe Game, :type => :model do
       let(:latest_turn) { games(:running_game).turns.order(:created_at).last }
       it { should eq latest_turn }
     end
+
+    context "when turn last turn is completed" do
+      let(:game) { games(:running_game) }
+      before { game.turns.order(:created_at).last.destroy }
+      it { expect { subject }.to change { Turn.count }.by(1) }
+    end
+
+    context "when game finished" do
+      let(:game) { games(:finished_game) }
+      let(:last_turn) { games(:finished_game).turns.order(:created_at).last }
+      it { should eq last_turn }
+    end
   end
 end
