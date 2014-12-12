@@ -40,8 +40,14 @@ RSpec.describe Player, :type => :model do
   describe "#dead?" do
     subject { player.dead? }
 
+    context "when there wasn't any lethal shot and player waits for opponent's moves" do
+      let(:player) { players(:jed) }
+      it { should be false}
+    end
+
     context "when there wasn't any lethal shot" do
       let(:player) { players(:jed) }
+      before { player.opponent.player_turns.last.destroy }
       it { should be false}
     end
 

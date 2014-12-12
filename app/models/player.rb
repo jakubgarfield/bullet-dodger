@@ -6,34 +6,28 @@ class Player < ActiveRecord::Base
   validates :game, presence: true
   validates :name, presence: true
 
-  BOUNDARY = 2
-
   def dead?
     return false unless opponent.present?
 
-    position = 0
-    opponent_position = 0
-    moves.zip(opponent.moves).each do |steps|
-      step = steps[0]
-      opponent_step = steps[1]
+    state, opponents_state = PlayerState.new, PlayerState.new
 
-      return false unless step.present? && opponent_step.present?
+    moves.zip(opponent.moves).each do |(move, opponents_move)|
+      return false if move.nil? || opponents_move.nil?
 
-      position = clamp_to_boundary(position + step.to_i)
-      opponent_position = clamp_to_boundary(opponent_position - opponent_step.to_i)
+      state.act(move)
+      opponents_state.act(opponents_move)
 
-      return opponent_step.shot? if step.shot? && position == opponent_position
-      return true if opponent_step.shot? && position == opponent_position
+      state.react(opponents_state)
+      opponents_state.react(state)
+
+      return true if state.dead?
+      return false if opponents_state.dead?
     end
+
     false
   end
 
   def opponent
     game.players.where.not(id: id).first
-  end
-
-  private
-  def clamp_to_boundary(position)
-    [-BOUNDARY, position, BOUNDARY].sort[1]
   end
 end

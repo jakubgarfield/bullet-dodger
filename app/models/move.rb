@@ -10,6 +10,8 @@ class Move < ActiveRecord::Base
   validates :player_turn, presence: true
   validates :action, presence: true, inclusion: { in: VALID_MOVES }
 
+  default_scope { order('created_at ASC') }
+
   def to_i
     case action
     when LEFT
