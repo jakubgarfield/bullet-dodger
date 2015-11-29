@@ -13,33 +13,36 @@
 
 ActiveRecord::Schema.define(version: 20141013220247) do
 
-  create_table "games", force: true do |t|
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+
+  create_table "games", force: :cascade do |t|
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  create_table "moves", force: true do |t|
+  create_table "moves", force: :cascade do |t|
     t.integer  "player_turn_id", null: false
     t.string   "action",         null: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  create_table "player_turns", force: true do |t|
+  create_table "player_turns", force: :cascade do |t|
     t.integer  "player_id",  null: false
     t.integer  "turn_id",    null: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  create_table "players", force: true do |t|
+  create_table "players", force: :cascade do |t|
     t.integer  "game_id",    null: false
     t.string   "name",       null: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  create_table "turns", force: true do |t|
+  create_table "turns", force: :cascade do |t|
     t.integer  "game_id",    null: false
     t.datetime "created_at"
     t.datetime "updated_at"
