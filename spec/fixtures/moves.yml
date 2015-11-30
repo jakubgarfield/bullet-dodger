@@ -1,67 +1,84 @@
 jed_2:
   player_turn: running_1_1
   action: "left"
+  created_at: <%= Time.parse("2014-01-01 00:02") %>
 
 jed_1:
   player_turn: running_1_1
   action: "left"
+  created_at: <%= Time.parse("2014-01-01 00:01") %>
 
 jakub_4:
-  player_turn: running_1_2
+  player_turn: running_2_1
   action: "shoot"
+  created_at: <%= Time.parse("2014-01-01 00:04") %>
 
 jakub_3:
-  player_turn: running_1_2
-  action: "wait"
+  player_turn: running_2_1
+  action: "shoot"
+  created_at: <%= Time.parse("2014-01-01 00:03") %>
 
 jakub_2:
-  player_turn: running_2_1
+  player_turn: running_1_2
   action: "shoot"
+  created_at: <%= Time.parse("2014-01-01 00:02") %>
 
 jakub_1:
-  player_turn: running_2_1
-  action: "shoot"
+  player_turn: running_1_2
+  action: "wait"
+  created_at: <%= Time.parse("2014-01-01 00:01") %>
 
 steven_2:
   player_turn: finished_1_1
   action: "wait"
+  created_at: <%= Time.parse("2014-01-01 00:02") %>
 
 steven_1:
   player_turn: finished_1_1
   action: "left"
+  created_at: <%= Time.parse("2014-01-01 00:01") %>
 
 leandro_2:
   player_turn: finished_1_2
   action: "shoot"
+  created_at: <%= Time.parse("2014-01-01 00:02") %>
 
 leandro_1:
   player_turn: finished_1_2
-  action: "right"
+  action: "left"
+  created_at: <%= Time.parse("2014-01-01 00:01") %>
 
 ben_3:
   player_turn: draw_1_1
   action: "left"
+  created_at: <%= Time.parse("2014-01-01 00:03") %>
 
 ben_2:
   player_turn: draw_1_1
   action: "right"
+  created_at: <%= Time.parse("2014-01-01 00:02") %>
 
 ben_1:
   player_turn: draw_1_1
   action: "shoot"
+  created_at: <%= Time.parse("2014-01-01 00:01") %>
 
 nick_3:
   player_turn: draw_1_2
   action: "shoot"
+  created_at: <%= Time.parse("2014-01-01 00:03") %>
 
 nick_2:
   player_turn: draw_1_2
   action: "shoot"
+  created_at: <%= Time.parse("2014-01-01 00:02") %>
 
 nick_1:
   player_turn: draw_1_2
   action: "shoot"
+  created_at: <%= Time.parse("2014-01-01 00:01") %>
 
 diego_1:
   player_turn: timed_out_1
   action: "right"
+  created_at: <%= Time.parse("2014-01-01 00:01") %>

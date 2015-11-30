@@ -1,8 +1,10 @@
 running_1:
   game: running_game
+  created_at: <%= Time.parse("2014-01-01 00:01") %>
 
 running_2:
   game: running_game
+  created_at: <%= Time.parse("2014-01-01 00:02") %>
 
 finished_1:
   game: finished_game

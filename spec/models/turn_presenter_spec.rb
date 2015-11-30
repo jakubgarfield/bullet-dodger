@@ -14,13 +14,12 @@ RSpec.describe GamePresenter, :type => :model do
       let(:turn) { turns(:running_1) }
       let(:jakub) { players(:jakub) }
       let(:jed) { players(:jed) }
-      let(:expected_hash) do
-        {
-          state: :completed,
-          moves: [{ player_id: jakub.id, moves: ["wait", "shoot"] }, { player_id: jed.id, moves: ["left", "left"] }]
-        }
+
+      it "is completed and has the turns information" do
+        expect(subject[:state]).to eq :completed
+        expect(subject[:moves]).to include({ player_id: jakub.id, moves: ["wait", "shoot"] })
+        expect(subject[:moves]).to include({ player_id: jed.id, moves: ["left", "left"] })
       end
-      it { should eq expected_hash }
     end
 
     context "when turn timed out" do
