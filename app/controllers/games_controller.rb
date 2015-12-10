@@ -52,4 +52,8 @@ eos
     player = game.players.create!(name: params[:name])
     render json: { game_id: game.id, player_id: player.id }
   end
+
+  def index
+    
+  end
 end
