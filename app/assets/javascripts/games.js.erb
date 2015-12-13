@@ -1,0 +1,31 @@
+$(function() {
+  var game = new Kiwi.Game();
+  var inGameState = new Kiwi.State("inGameState");
+
+  inGameState.preload = function() {
+    Kiwi.State.prototype.preload.call(this);
+    this.addSpriteSheet( "cowboy", "<%= asset_path('cowboy.png') %>", 50, 55);
+  };
+
+  inGameState.create = function() {
+    this.player = new Kiwi.GameObjects.Sprite(this, this.textures["cowboy"], 100, 330, true );
+    this.player.animation.add("idle", [0, 1, 2, 3], 0.2, true);
+    this.player.animation.add("walk", [8, 9, 10, 11], 0.2, true);
+    this.player.animation.add("shoot", [4, 5, 6, 7], 0.2, false);
+    this.player.animation.add("reload", [0, 1, 17, 18, 2, 3], 0.2, false);
+
+    this.player.animation.play("idle");
+
+    this.opponent = new Kiwi.GameObjects.Sprite(this, this.textures["cowboy"], 100, 0, true );
+    this.addChild(this.player);
+    this.addChild(this.opponent);
+  };
+
+  inGameState.update = function() {
+    Kiwi.State.prototype.update.call(this);
+  };
+
+  game.states.addState(inGameState);
+
+  game.states.switchState("inGameState");
+});
