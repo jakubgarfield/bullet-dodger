@@ -1,20 +1,6 @@
 $(function() {
   var game = new Kiwi.Game();
   var inGameState = new Kiwi.State("inGameState");
-  var moves = [];
-  var playerPosition = 100;
-  var moveToProcess = null;
-  var nextMoveIndex = 0;
-
-  var addMove = function(move) {
-    if (moves.length < 5) {
-      moves.push(move);
-      console.log(moves);
-    } else {
-      moveToProcess = moves[nextMoveIndex];
-      nextMoveIndex += 1;
-    }
-  };
 
   inGameState.preload = function() {
     Kiwi.State.prototype.preload.call(this);
@@ -22,19 +8,28 @@ $(function() {
   };
 
   inGameState.create = function() {
-    this.player = new Kiwi.GameObjects.Sprite(this, this.textures["cowboy"], playerPosition, 330, true);
+    self = this;
+    this.replayRound = false;
+
+    this.player = new Kiwi.GameObjects.Sprite(this, this.textures["cowboy"], 100, 250, true);
     this.player.animation.add("idle", [0, 1, 2, 3], 0.2, true);
     this.player.animation.add("walk", [8, 9, 10, 11], 0.1, true);
     this.player.animation.add("shoot", [4, 5, 6, 7], 0.2, false);
     this.player.animation.add("reload", [0, 1, 17, 18, 2, 3], 0.2, false);
     this.player.animation.play("idle");
+    this.player.moves = [];
+    this.player.futurePosition = this.player.transform.x;
+    this.player.addMove = function(move) {
+      if (self.player.moves.length < 5 && !self.replayRound) {
+        self.player.moves.push(move);
+      }
 
-    this.opponent = new Kiwi.GameObjects.Sprite(this, this.textures["cowboy"], playerPosition, 0, true);
-    this.opponent.animation.add("idle", [0, 1, 2, 3], 0.2, true);
-    this.opponent.animation.add("walk", [8, 9, 10, 11], 0.2, true);
-    this.opponent.animation.add("shoot", [4, 5, 6, 7], 0.2, true);
-    this.opponent.animation.add("reload", [0, 1, 17, 18, 2, 3], 0.2, false);
-    this.opponent.animation.play("idle");
+      if (self.player.moves.length == 5) {
+        console.log(self.player.moves);
+        self.replayRound = true;
+        self.readyToProcessNext = true;
+      }
+    };
 
     this.leftKey = this.game.input.keyboard.addKey(Kiwi.Input.Keycodes.LEFT);
     this.rightKey = this.game.input.keyboard.addKey(Kiwi.Input.Keycodes.RIGHT);
@@ -42,7 +37,6 @@ $(function() {
     this.downKey = this.game.input.keyboard.addKey(Kiwi.Input.Keycodes.DOWN);
 
     this.addChild(this.player);
-    this.addChild(this.opponent);
   };
 
   inGameState.update = function() {
@@ -54,45 +48,57 @@ $(function() {
     if (this.upKey.isUp) { this.upKey.canAddMove = true; }
     if (this.downKey.isUp) { this.downKey.canAddMove = true; }
 
-    if (this.leftKey.isDown && this.leftKey.canAddMove) { this.leftKey.canAddMove = false; addMove("left"); }
-    if (this.rightKey.isDown && this.rightKey.canAddMove) { this.rightKey.canAddMove = false; addMove("right"); }
-    if (this.upKey.isDown && this.upKey.canAddMove) { this.upKey.canAddMove = false; addMove("shoot"); }
-    if (this.downKey.isDown && this.downKey.canAddMove) { this.downKey.canAddMove = false; addMove("reload"); }
+    if (this.leftKey.isDown && this.leftKey.canAddMove) { this.leftKey.canAddMove = false; this.player.addMove("left"); }
+    if (this.rightKey.isDown && this.rightKey.canAddMove) { this.rightKey.canAddMove = false; this.player.addMove("right"); }
+    if (this.upKey.isDown && this.upKey.canAddMove) { this.upKey.canAddMove = false; this.player.addMove("shoot"); }
+    if (this.downKey.isDown && this.downKey.canAddMove) { this.downKey.canAddMove = false; this.player.addMove("reload"); }
 
-    if (moveToProcess) {
-      if (moveToProcess == "left" && playerPosition > 0) {
-        playerPosition -= 50;
+    if (this.replayRound && this.readyToProcessNext) {
+      var playerMove = this.player.moves.shift();
+
+      if (playerMove == "left" && this.player.transform.x > 0) {
+        this.player.futurePosition -= 50;
       }
-      else if (moveToProcess == "right" && playerPosition > 0) {
-        playerPosition += 50;
+      else if (playerMove == "right" && this.player.transform.x < 200) {
+        this.player.futurePosition += 50;
       }
-      else if (moveToProcess == "shoot") {
+      else if (playerMove == "shoot") {
         this.player.shooting = true;
       }
-      else if (moveToProcess == "reload") {
+      else if (playerMove == "reload") {
         this.player.reloading = true;
       }
 
-      moveToProcess = null;
+      this.readyToProcessNext = false;
     }
 
-    if (playerPosition > this.player.transform.x) {
-      this.player.animation.play("walk");
-      this.player.transform.x += 2;
-    }
-    else if (playerPosition < this.player.transform.x) {
-      this.player.animation.play("walk");
-      this.player.transform.x -= 2;
-    }
-    else {
-      if (this.player.shooting = true) {
-        this.player.animation.play("shoot");
+    if (this.replayRound) {
+      if (this.player.futurePosition > this.player.transform.x) {
+        if (this.player.animation.currentAnimation.name != "walk") { this.player.animation.play("walk"); }
+        this.player.transform.x += 1;
       }
-      else if (this.player.reloading = true) {
-        this.player.animation.play("reload");
+      else if (this.player.futurePosition < this.player.transform.x) {
+        if (this.player.animation.currentAnimation.name != "walk") { this.player.animation.play("walk"); }
+        this.player.transform.x -= 1;
       }
       else {
-        this.player.animation.play("idle");
+        if (this.player.shooting) {
+          if (this.player.animation.currentAnimation.name != "shoot") {
+              this.player.animation.play("shoot");
+          }
+          this.player.shooting = this.player.animation.isPlaying;
+        }
+        else if (this.player.reloading) {
+          if (this.player.animation.currentAnimation.name != "reload") {
+              this.player.animation.play("reload");
+          }
+          this.player.reloading = this.player.animation.isPlaying;
+        }
+        else {
+          this.replayRound = this.player.moves.length > 0;
+          this.readyToProcessNext = this.replayRound;
+          this.player.animation.play("idle");
+        }
       }
     }
   };
