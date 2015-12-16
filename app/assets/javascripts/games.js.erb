@@ -1,6 +1,20 @@
 $(function() {
   var game = new Kiwi.Game();
   var inGameState = new Kiwi.State("inGameState");
+  var moves = [];
+  var playerPosition = 100;
+  var moveToProcess = null;
+  var nextMoveIndex = 0;
+
+  var addMove = function(move) {
+    if (moves.length < 5) {
+      moves.push(move);
+      console.log(moves);
+    } else {
+      moveToProcess = moves[nextMoveIndex];
+      nextMoveIndex += 1;
+    }
+  };
 
   inGameState.preload = function() {
     Kiwi.State.prototype.preload.call(this);
@@ -8,21 +22,79 @@ $(function() {
   };
 
   inGameState.create = function() {
-    this.player = new Kiwi.GameObjects.Sprite(this, this.textures["cowboy"], 100, 330, true );
+    this.player = new Kiwi.GameObjects.Sprite(this, this.textures["cowboy"], playerPosition, 330, true);
     this.player.animation.add("idle", [0, 1, 2, 3], 0.2, true);
-    this.player.animation.add("walk", [8, 9, 10, 11], 0.2, true);
+    this.player.animation.add("walk", [8, 9, 10, 11], 0.1, true);
     this.player.animation.add("shoot", [4, 5, 6, 7], 0.2, false);
     this.player.animation.add("reload", [0, 1, 17, 18, 2, 3], 0.2, false);
-
     this.player.animation.play("idle");
 
-    this.opponent = new Kiwi.GameObjects.Sprite(this, this.textures["cowboy"], 100, 0, true );
+    this.opponent = new Kiwi.GameObjects.Sprite(this, this.textures["cowboy"], playerPosition, 0, true);
+    this.opponent.animation.add("idle", [0, 1, 2, 3], 0.2, true);
+    this.opponent.animation.add("walk", [8, 9, 10, 11], 0.2, true);
+    this.opponent.animation.add("shoot", [4, 5, 6, 7], 0.2, true);
+    this.opponent.animation.add("reload", [0, 1, 17, 18, 2, 3], 0.2, false);
+    this.opponent.animation.play("idle");
+
+    this.leftKey = this.game.input.keyboard.addKey(Kiwi.Input.Keycodes.LEFT);
+    this.rightKey = this.game.input.keyboard.addKey(Kiwi.Input.Keycodes.RIGHT);
+    this.upKey = this.game.input.keyboard.addKey(Kiwi.Input.Keycodes.UP);
+    this.downKey = this.game.input.keyboard.addKey(Kiwi.Input.Keycodes.DOWN);
+
     this.addChild(this.player);
     this.addChild(this.opponent);
   };
 
   inGameState.update = function() {
+    var self = this;
     Kiwi.State.prototype.update.call(this);
+
+    if (this.leftKey.isUp) { this.leftKey.canAddMove = true; }
+    if (this.rightKey.isUp) { this.rightKey.canAddMove = true; }
+    if (this.upKey.isUp) { this.upKey.canAddMove = true; }
+    if (this.downKey.isUp) { this.downKey.canAddMove = true; }
+
+    if (this.leftKey.isDown && this.leftKey.canAddMove) { this.leftKey.canAddMove = false; addMove("left"); }
+    if (this.rightKey.isDown && this.rightKey.canAddMove) { this.rightKey.canAddMove = false; addMove("right"); }
+    if (this.upKey.isDown && this.upKey.canAddMove) { this.upKey.canAddMove = false; addMove("shoot"); }
+    if (this.downKey.isDown && this.downKey.canAddMove) { this.downKey.canAddMove = false; addMove("reload"); }
+
+    if (moveToProcess) {
+      if (moveToProcess == "left" && playerPosition > 0) {
+        playerPosition -= 50;
+      }
+      else if (moveToProcess == "right" && playerPosition > 0) {
+        playerPosition += 50;
+      }
+      else if (moveToProcess == "shoot") {
+        this.player.shooting = true;
+      }
+      else if (moveToProcess == "reload") {
+        this.player.reloading = true;
+      }
+
+      moveToProcess = null;
+    }
+
+    if (playerPosition > this.player.transform.x) {
+      this.player.animation.play("walk");
+      this.player.transform.x += 2;
+    }
+    else if (playerPosition < this.player.transform.x) {
+      this.player.animation.play("walk");
+      this.player.transform.x -= 2;
+    }
+    else {
+      if (this.player.shooting = true) {
+        this.player.animation.play("shoot");
+      }
+      else if (this.player.reloading = true) {
+        this.player.animation.play("reload");
+      }
+      else {
+        this.player.animation.play("idle");
+      }
+    }
   };
 
   game.states.addState(inGameState);
