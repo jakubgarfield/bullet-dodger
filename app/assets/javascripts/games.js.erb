@@ -9,7 +9,7 @@ $(function() {
 
   inGameState.createCharacter = function(x, y) {
     var character = new Kiwi.GameObjects.Sprite(this, this.textures["cowboy"], x, y, true);
-    character.animation.add("idle", [0, 1, 2, 3], 0.2, true);
+    character.animation.add("idle", [0, 1, 2, 3], 0.1, true);
     character.animation.add("confused", [17, 18, 19, 20], 0.2, false);
     character.animation.add("walk", [8, 9, 10, 11], 0.1, true);
     character.animation.add("shoot", [4, 5, 6, 7], 0.2, false);
@@ -36,34 +36,36 @@ $(function() {
         this.confused = true;
       }
     };
-    character.animate = function(reverse) {
+    character.processMove = function(reverse) {
       if (this.readyToProcessNext) {
         if (this.moves.length > 0) {
-          var playerMove = this.moves.shift();
-          if (reverse && playerMove == "left") {
-            playerMove = "right";
+          this.currentMove = this.moves.shift();
+          if (reverse && this.currentMove == "left") {
+            this.currentMove = "right";
           }
-          else if (reverse && playerMove == "right") {
-            playerMove = "left";
+          else if (reverse && this.currentMove == "right") {
+            this.currentMove = "left";
           }
 
-          if (playerMove == "left" && this.transform.x > 0) {
+          if (this.currentMove == "left" && this.transform.x > 0) {
             this.futurePosition += -50;
           }
-          else if (playerMove == "right" && this.transform.x < 200) {
+          else if (this.currentMove == "right" && this.transform.x < 200) {
             this.futurePosition += 50;
           }
-          else if (playerMove == "shoot") {
+          else if (this.currentMove == "shoot") {
             this.shoot();
           }
-          else if (playerMove == "reload") {
+          else if (this.currentMove == "reload") {
             this.reload();
           }
 
           this.readyToProcessNext = false;
         }
       }
+    };
 
+    character.animate = function() {
       if (this.futurePosition > this.transform.x) {
         if (this.animation.currentAnimation.name != "walk") { this.animation.play("walk"); }
         this.transform.x += 1;
@@ -145,8 +147,23 @@ $(function() {
 
     if (this.replayRound) {
       this.replayRound = this.player.moves.length > 0 || this.opponent.moves.length > 0 || !this.player.readyToProcessNext || !this.opponent.readyToProcessNext;
+      this.player.processMove();
+      this.opponent.processMove(true);
+
+      if (this.player.shootng && this.player.transform.x == this.opponent.futurePosition) {
+        console.log("opponent dead");
+        this.player.moves = [];
+        this.opponent.moves = [];
+      }
+
+      if (this.opponent.shooting && this.opponent.transform.x == this.player.futurePosition) {
+        console.log("player dead");
+        this.player.moves = [];
+        this.opponent.moves = [];
+      }
+
       this.player.animate();
-      this.opponent.animate(true);
+      this.opponent.animate();
     }
   };
 
