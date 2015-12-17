@@ -10,12 +10,32 @@ $(function() {
   inGameState.createCharacter = function(x, y) {
     var character = new Kiwi.GameObjects.Sprite(this, this.textures["cowboy"], x, y, true);
     character.animation.add("idle", [0, 1, 2, 3], 0.2, true);
+    character.animation.add("confused", [17, 18, 19, 20], 0.2, false);
     character.animation.add("walk", [8, 9, 10, 11], 0.1, true);
     character.animation.add("shoot", [4, 5, 6, 7], 0.2, false);
     character.animation.add("reload", [0, 1, 17, 18, 2, 3], 0.2, false);
     character.animation.play("idle");
     character.moves = [];
     character.futurePosition = character.transform.x;
+    character.bullets = 5;
+    character.reload = function() {
+      if (this.bullets < 5) {
+        this.bullets += 1;
+        this.reloading = true;
+      }
+      else {
+        this.confused = true;
+      }
+    };
+    character.shoot = function() {
+      if (this.bullets > 0) {
+        this.bullets -= 1;
+        this.shooting = true;
+      }
+      else {
+        this.confused = true;
+      }
+    };
     character.animate = function(reverse) {
       if (this.readyToProcessNext) {
         if (this.moves.length > 0) {
@@ -34,10 +54,10 @@ $(function() {
             this.futurePosition += 50;
           }
           else if (playerMove == "shoot") {
-            this.shooting = true;
+            this.shoot();
           }
           else if (playerMove == "reload") {
-            this.reloading = true;
+            this.reload();
           }
 
           this.readyToProcessNext = false;
@@ -64,6 +84,12 @@ $(function() {
             this.animation.play("reload");
           }
           this.reloading = this.animation.isPlaying;
+        }
+        else if (this.confused) {
+          if (this.animation.currentAnimation.name != "confused") {
+            this.animation.play("confused");
+          }
+          this.confused = this.animation.isPlaying;
         }
         else {
           this.readyToProcessNext = true;
