@@ -1,13 +1,13 @@
 $(function() {
   var game = new Kiwi.Game();
-  var inGameState = new Kiwi.State("inGameState");
+  var playing = new Kiwi.State("playing");
 
-  inGameState.preload = function() {
+  playing.preload = function() {
     Kiwi.State.prototype.preload.call(this);
     this.addSpriteSheet( "cowboy", "<%= asset_path('cowboy.png') %>", 50, 55);
   };
 
-  inGameState.createCharacter = function(x, y) {
+  playing.createCharacter = function(x, y) {
     var character = new Kiwi.GameObjects.Sprite(this, this.textures["cowboy"], x, y, true);
     character.animation.add("idle", [0, 1, 2, 3], 0.1, true);
     character.animation.add("confused", [17, 18, 19, 20], 0.2, false);
@@ -18,6 +18,7 @@ $(function() {
     character.moves = [];
     character.futurePosition = character.transform.x;
     character.bullets = 5;
+    character.readyToProcessNext = true;
     character.reload = function() {
       if (this.bullets < 5) {
         this.bullets += 1;
@@ -105,7 +106,7 @@ $(function() {
     return character;
   };
 
-  inGameState.create = function() {
+  playing.create = function() {
     var self = this;
     this.replayRound = false;
 
@@ -118,7 +119,6 @@ $(function() {
       if (self.player.moves.length == 5) {
         console.log(self.player.moves);
         self.replayRound = true;
-        self.player.readyToProcessNext = true;
       }
     };
 
@@ -131,7 +131,7 @@ $(function() {
     this.addChild(this.player);
   };
 
-  inGameState.update = function() {
+  playing.update = function() {
     var self = this;
     Kiwi.State.prototype.update.call(this);
 
@@ -150,16 +150,22 @@ $(function() {
       this.player.processMove();
       this.opponent.processMove(true);
 
-      if (this.player.shootng && this.player.transform.x == this.opponent.futurePosition) {
+      if (this.player.shooting && this.player.transform.x == this.opponent.futurePosition) {
         console.log("opponent dead");
         this.player.moves = [];
         this.opponent.moves = [];
+        this.finished = this.player.animation.isPlaying && this.opponent.animation.isPlaying;
       }
 
       if (this.opponent.shooting && this.opponent.transform.x == this.player.futurePosition) {
         console.log("player dead");
         this.player.moves = [];
         this.opponent.moves = [];
+        this.finished = this.player.animation.isPlaying && this.opponent.animation.isPlaying;
+      }
+
+      if (this.finished) {
+        this.game.states.switchState("gameOver");
       }
 
       this.player.animate();
@@ -167,7 +173,14 @@ $(function() {
     }
   };
 
-  game.states.addState(inGameState);
+  var gameOver = new Kiwi.State("gameOver");
 
-  game.states.switchState("inGameState");
+  gameOver.create = function() {
+    console.log("game over");
+  };
+
+  game.states.addState(playing);
+  game.states.addState(gameOver);
+
+  game.states.switchState("playing");
 });
