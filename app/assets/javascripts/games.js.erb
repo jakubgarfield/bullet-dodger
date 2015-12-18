@@ -1,5 +1,60 @@
 $(function() {
+  var session = {
+    playerId: null,
+    gameId : null,
+
+    joinGameCompleted: function(data) {
+      playerId = data["player_id"];
+      gameId = data["game_id"];
+      controller.getGame(gameId);
+    },
+
+    getGameCompleted: function(data) {
+      console.log(data);
+    },
+  };
+
+  var controller = {
+    joinGame: function() {
+      session.gameReady = false;
+      $.ajax({
+        type: "POST",
+        url: "/games",
+        data: { name: "Johny" },
+        success: session.joinGameCompleted,
+      });
+    },
+
+    getGame: function(id) {
+      $.ajax({
+        type: "GET",
+        url: "/games/" + id,
+        success: session.getGameCompleted,
+      });
+    },
+
+    getTurn: function(id) {
+    },
+
+    postRound: function(playerId, moves) {
+    },
+  };
+
   var game = new Kiwi.Game();
+
+  var waitingForGame = new Kiwi.State("waitingForGame");
+
+  waitingForGame.create = function() {
+    Kiwi.State.prototype.preload.call(this);
+    console.log("joining the game");
+    controller.joinGame();
+  };
+
+  waitingForGame.update = function() {
+    Kiwi.State.prototype.preload.call(this);
+    if(session.gameReady) { game.states.switchStates("playing"); }
+  };
+
   var playing = new Kiwi.State("playing");
 
   playing.preload = function() {
@@ -179,6 +234,7 @@ $(function() {
     console.log("game over");
   };
 
+  game.states.addState(waitingForGame)
   game.states.addState(playing);
   game.states.addState(gameOver);
 
