@@ -209,22 +209,23 @@ $(function() {
         console.log("opponent dead");
         this.player.moves = [];
         this.opponent.moves = [];
-        this.finished = this.player.animation.isPlaying && this.opponent.animation.isPlaying;
+        this.finished = true;
       }
 
       if (this.opponent.shooting && this.opponent.transform.x == this.player.futurePosition) {
         console.log("player dead");
         this.player.moves = [];
         this.opponent.moves = [];
-        this.finished = this.player.animation.isPlaying && this.opponent.animation.isPlaying;
+        this.finished = true;
       }
 
-      if (this.finished) {
-        this.game.states.switchState("gameOver");
-      }
 
       this.player.animate();
       this.opponent.animate();
+
+      if (this.finished && !(this.player.animation.isPlaying && this.opponent.animation.isPlaying)) {
+        this.game.states.switchState("gameOver");
+      }
     }
   };
 
