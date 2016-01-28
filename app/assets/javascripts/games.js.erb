@@ -1,58 +1,70 @@
 $(function() {
-  var session = {
-    playerId: null,
-    gameId : null,
+  var game = new Kiwi.Game();
 
-    joinGameCompleted: function(data) {
-      playerId = data["player_id"];
-      gameId = data["game_id"];
-      controller.getGame(gameId);
-    },
+  function Session() {
+    this.playerId = null;
+    this.gameId = null;
+    this.gameState = null;
+  }
 
-    getGameCompleted: function(data) {
-      console.log(data);
-    },
+  Session.prototype.joinGameCompleted = function(data) {
+    this.playerId = data["player_id"];
+    this.gameId = data["game_id"];
   };
 
-  var controller = {
-    joinGame: function() {
-      session.gameReady = false;
-      $.ajax({
-        type: "POST",
-        url: "/games",
-        data: { name: "Johny" },
-        success: session.joinGameCompleted,
-      });
-    },
+  Session.prototype.getGameCompleted = function(data) {
+    this.gameState = data["state"];
+  };
 
-    getGame: function(id) {
+  function Controller(session, game) {
+    this.lastCall = 0;
+    this.wait = 1;
+    this.session = session;
+    this.game = game;
+  }
+
+  Controller.prototype.joinGame = function() {
+    this.session.gameReady = false;
+    $.ajax({
+      type: "POST",
+      url: "/games",
+      data: { name: "Johny" },
+      success: function(data) { session.joinGameCompleted(data); },
+    });
+  };
+
+  Controller.prototype.getGame = function(id) {
+    if (this.lastCall + this.wait <  this.game.time.clock.elapsed()) {
+      this.lastCall = this.game.time.clock.elapsed();
       $.ajax({
         type: "GET",
         url: "/games/" + id,
-        success: session.getGameCompleted,
+        success: function(data) { session.getGameCompleted(data) },
       });
-    },
-
-    getTurn: function(id) {
-    },
-
-    postRound: function(playerId, moves) {
-    },
+    }
   };
 
-  var game = new Kiwi.Game();
+  Controller.prototype.getTurn = function(id) {
+  };
 
+  Controller.prototype.postRound = function(playerId, moves) {
+  };
+
+  var session = new Session();
+  var controller = new Controller(session, game);
   var waitingForGame = new Kiwi.State("waitingForGame");
 
   waitingForGame.create = function() {
     Kiwi.State.prototype.preload.call(this);
     console.log("joining the game");
+    console.log(game.time.clock.elapsed());
     controller.joinGame();
   };
 
   waitingForGame.update = function() {
     Kiwi.State.prototype.preload.call(this);
-    if(session.gameReady) { game.states.switchStates("playing"); }
+    if(session.gameState === "running") { game.states.switchState("playing"); }
+    else { controller.getGame(session.gameId); }
   };
 
   var playing = new Kiwi.State("playing");
@@ -239,5 +251,5 @@ $(function() {
   game.states.addState(playing);
   game.states.addState(gameOver);
 
-  game.states.switchState("playing");
+  game.states.switchState("waitingForGame");
 });
